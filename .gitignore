@@ -2,3 +2,4 @@
 *.sqlite3
 *.txt
 *.json
+*_env/
