@@ -4,10 +4,11 @@ from django.db import models
 
 
 class Instagram(models.Model):
-    Title = models.CharField(max_length=20)
-    Context = models.TextField()
-    UploadImage = models.URLField()
     UploadTime = models.DateTimeField(auto_now=True)
+    title = models.CharField(max_length=20)
+    context = models.TextField(max_length=400)
+    photo_URL = models.TextField()
+    
 
     class Meta:
         ordering = ["UploadTime"]
