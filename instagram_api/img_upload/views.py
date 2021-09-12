@@ -1,6 +1,5 @@
 import boto3
 import uuid
-from .serializers import *
 from instagram.settings import (
     AWS_SECRET_ACCESS_KEY,
     AWS_ACCESS_KEY_ID,
@@ -8,11 +7,11 @@ from instagram.settings import (
     AWS_S3_CUSTOM_DOMAIN,
 )
 from django.http import JsonResponse
-from django.views.generic import View
 from rest_framework.views import APIView
 from .models import Instagram
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from rest_framework import exceptions
+import ast
 # Create your views here.
 
 
@@ -29,7 +28,7 @@ class PostAPIView(APIView):
             current_page = paginator.page(current_pagenum)
         except EmptyPage or PageNotAnInteger:
             raise exceptions.ParseError("PageNotFound")
-        
+          
         page_range = {"start_page": start_pagenum,"current_page":current_pagenum ,"end_page": end_pagenum}
         posts= {}
 
@@ -37,17 +36,20 @@ class PostAPIView(APIView):
             post = {
                 "Title": context.Title,
                 "Context": context.Context,
-                "UploadImage": context.UploadImage,
+                "UploadImage": ast.literal_eval(context.Image),
             }
-            posts.update(post)
-
+            posts[context.id] = post
+        
         context = {"page_range": page_range, "post_list": posts}
         return JsonResponse(context, status=200)
 
     def post(self, request):
-        serializer = InstagramSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
+        PostObjects = Instagram.objects.create(
+            Title=request.data["title"],
+            Context=request.data["context"],
+            Image=request.data.getlist("photo_URL"),
+        )
+        PostObjects.save()
         return JsonResponse(request.data, status=200)
 
 
