@@ -30,7 +30,7 @@ class PostAPIView(APIView):
             raise exceptions.ParseError("PageNotFound")
           
         page_range = {"start_page": start_pagenum,"current_page":current_pagenum ,"end_page": end_pagenum}
-        posts= {}
+        posts= []
 
         for context in current_page:
             post = {
@@ -38,7 +38,7 @@ class PostAPIView(APIView):
                 "Context": context.Context,
                 "UploadImage": ast.literal_eval(context.Image),
             }
-            posts[context.id] = post
+            posts.append(post)
         
         context = {"page_range": page_range, "post_list": posts}
         return JsonResponse(context, status=200)
