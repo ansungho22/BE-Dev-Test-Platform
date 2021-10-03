@@ -3,5 +3,5 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("today/", views.Weather.as_view()),
+    path("today/<str:city>/", views.Weather.as_view()),
 ]

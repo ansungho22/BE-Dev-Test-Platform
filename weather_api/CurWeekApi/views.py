@@ -4,7 +4,7 @@ from .openweather import weather
 
 
 class Weather(APIView):
-    def get(self, request):
+    def get(self, request,city):
         get_weather = weather
-        weather_data = get_weather.return_weather(request.data["city"])
+        weather_data = get_weather.return_weather(city)
         return Response(weather_data, status=200)
